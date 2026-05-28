@@ -1,5 +1,5 @@
 "use client";
-
+import { useAuthModal } from "@/context/AuthModalContext";
 import { useState, useEffect } from "react";
 import Image from 'next/image';
 import  { AiFillFileText, AiFillBulb, AiFillAudio } from "react-icons/ai";
@@ -8,6 +8,7 @@ import { BiCrown } from "react-icons/bi";
 import { RiLeafLine } from "react-icons/ri";
 
 export default function Home() {
+  const { openModal } = useAuthModal();
   const [activeStatOne, setActiveStatOne] = useState(0);
   const [activeStatTwo, setActiveStatTwo] = useState(0);
   
@@ -40,7 +41,7 @@ export default function Home() {
             />
         </figure>
         <ul className="nav__list--wrapper">
-          <li className="nav__list nav__list--login">Login</li>
+          <li className="nav__list nav__list--login" onClick={openModal} >Login</li>
           <li className="nav__list nav__list--mobile">About</li>
           <li className="nav__list nav__list--mobile">Contact</li>
           <li className="nav__list nav__list--mobile">Help</li>
@@ -63,7 +64,7 @@ export default function Home() {
                 <br className="remove--tablet" />
                 and even people who don’t like to read.
               </div>
-              <button className="btn home__cta--btn">Login</button>
+              <button className="btn home__cta--btn" onClick={openModal}>Login</button>
             </div>
             <figure className="landing__image--mask">
 
@@ -261,7 +262,7 @@ export default function Home() {
             </div>
           </div>
           <div className="reviews__btn--wrapper">
-            <button className="btn home__cta--btn">Login</button>
+            <button className="btn home__cta--btn" onClick={openModal}>Login</button>
           </div>
         </div>
       </div>
