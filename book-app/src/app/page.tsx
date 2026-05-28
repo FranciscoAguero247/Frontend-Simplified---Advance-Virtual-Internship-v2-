@@ -1,14 +1,43 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useState, useEffect } from "react";
+import Image from 'next/image';
 import  { AiFillFileText, AiFillBulb, AiFillAudio } from "react-icons/ai";
+import { BsStarFill, BsStarHalf } from "react-icons/bs";
+import { BiCrown } from "react-icons/bi";
+import { RiLeafLine } from "react-icons/ri";
 
 export default function Home() {
+  const [activeStatOne, setActiveStatOne] = useState(0);
+  const [activeStatTwo, setActiveStatTwo] = useState(0);
+  
+  useEffect(() => {
+    const intervalOne = setInterval(() => {
+      setActiveStatOne((prev) => (prev + 1) % 6);
+    }, 2500);
+
+    const intervalTwo = setInterval(() => {
+      setActiveStatTwo((prev) => (prev + 1) % 6);
+    }, 2500);
+
+    return () => {
+      clearInterval(intervalOne);
+      clearInterval(intervalTwo);
+    };
+  }, []);
+
   return (
     <>
     <nav className="nav">
       <div className="nav__wrapper">
         <figure className="nav__img--mask">
-          <img className="nav__img" src="null" alt="logo" />
+          <Image
+            className="nav__img" 
+            src="/assets/logo.png"
+            alt="logo"
+            width={150}
+            height={150}
+            />
         </figure>
         <ul className="nav__list--wrapper">
           <li className="nav__list nav__list--login">Login</li>
@@ -37,7 +66,15 @@ export default function Home() {
               <button className="btn home__cta--btn">Login</button>
             </div>
             <figure className="landing__image--mask">
-              <img src="null" alt="landing" />
+
+              <Image
+              src="/assets/landing.png"
+              alt="landing"
+              width={500}
+              height={500}
+              />
+
+
             </figure>
           </div>
         </div>
@@ -76,18 +113,14 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="statistics__wrapper">
+          <div className="statistics__wrapper">  
             <div className="statistics__content--header">
-              <div className="statistics__heading">Enhance your knowledge</div>
-              <div className="statistics__heading">Achieve greater success</div>
-              <div className="statistics__heading">Improve your health</div>
-              <div className="statistics__heading">
-                Develop better parenting skills
-              </div>
-              <div className="statistics__heading">Increase happiness</div>
-              <div className="statistics__heading">
-                Be the best version of yourself!
-              </div>
+              <div className={`statistics__heading ${activeStatOne === 0 ? "statistics__heading--active" : ""}`}>Enhance your knowledge</div>
+              <div className={`statistics__heading ${activeStatOne === 1 ? "statistics__heading--active" : ""}`}>Achieve greater success</div>
+              <div className={`statistics__heading ${activeStatOne === 2 ? "statistics__heading--active" : ""}`}>Improve your health</div>
+              <div className={`statistics__heading ${activeStatOne === 3 ? "statistics__heading--active" : ""}`}>Develop better parenting skills</div>
+              <div className={`statistics__heading ${activeStatOne === 4 ? "statistics__heading--active" : ""}`}>Increase happiness</div>
+              <div className={`statistics__heading ${activeStatOne === 5 ? "statistics__heading--active" : ""}`}>Be the best version of yourself!</div>
             </div>
             <div className="statistics__content--details">
               <div className="statistics__data">
@@ -140,12 +173,12 @@ export default function Home() {
             <div
               className="statistics__content--header statistics__content--header-second"
             >
-              <div className="statistics__heading">Expand your learning</div>
-              <div className="statistics__heading">Accomplish your goals</div>
-              <div className="statistics__heading">Strengthen your vitality</div>
-              <div className="statistics__heading">Become a better caregiver</div>
-              <div className="statistics__heading">Improve your mood</div>
-              <div className="statistics__heading">Maximize your abilities</div>
+              <div className={`statistics__heading ${activeStatTwo === 0 ? "statistics__heading--active" : ""}`}>Expand your learning</div>
+              <div className={`statistics__heading ${activeStatTwo === 1 ? "statistics__heading--active" : ""}`}>Accomplish your goals</div>
+              <div className={`statistics__heading ${activeStatTwo === 2 ? "statistics__heading--active" : ""}`}>Strengthen your vitality</div>
+              <div className={`statistics__heading ${activeStatTwo === 3 ? "statistics__heading--active" : ""}`}>Become a better caregiver</div>
+              <div className={`statistics__heading ${activeStatTwo === 4 ? "statistics__heading--active" : ""}`}>Improve your mood</div>
+              <div className={`statistics__heading ${activeStatTwo === 5 ? "statistics__heading--active" : ""}`}>Maximize your abilities</div>
             </div>
           </div>
         </div>
@@ -160,7 +193,11 @@ export default function Home() {
               <div className="review__header">
                 <div className="review__name">Hanna M.</div>
                 <div className="review__stars">
-                  {/* <BsStarFill /> */}
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
                 </div>
               </div>
               <div className="review__body">
@@ -173,7 +210,11 @@ export default function Home() {
               <div className="review__header">
                 <div className="review__name">David B.</div>
                 <div className="review__stars">
-                  {/* <BsStarFill /> */}
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
                 </div>
               </div>
               <div className="review__body">
@@ -186,7 +227,11 @@ export default function Home() {
               <div className="review__header">
                 <div className="review__name">Nathan S.</div>
                 <div className="review__stars">
-                  {/* <BsStarFill /> */}
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
                 </div>
               </div>
               <div className="review__body">
@@ -200,7 +245,11 @@ export default function Home() {
               <div className="review__header">
                 <div className="review__name">Ryan R.</div>
                 <div className="review__stars">
-                  {/* <BsStarFill /> */}
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
+                  <BsStarFill />
                 </div>
               </div>
               <div className="review__body">
@@ -224,15 +273,18 @@ export default function Home() {
           <div className="numbers__wrapper">
             <div className="numbers">
               <div className="numbers__icon">
-                {/* <BiCrown /> */}
+                <BiCrown />
               </div>
               <div className="numbers__title">3 Million</div>
               <div className="numbers__sub--title">Downloads on all platforms</div>
             </div>
             <div className="numbers">
               <div className="numbers__icon numbers__star--icon">
-                {/* <BsStarFill />
-                <BsStarHalf /> */}
+                <BsStarFill />
+                <BsStarFill />
+                <BsStarFill />
+                <BsStarFill />
+                <BsStarHalf />
               </div>
               <div className="numbers__title">4.5 Stars</div>
               <div className="numbers__sub--title">
@@ -241,7 +293,7 @@ export default function Home() {
             </div>
             <div className="numbers">
               <div className="numbers__icon">
-                {/* <RiLeafLine /> */}
+                <RiLeafLine />
               </div>
               <div className="numbers__title">97%</div>
               <div className="numbers__sub--title">

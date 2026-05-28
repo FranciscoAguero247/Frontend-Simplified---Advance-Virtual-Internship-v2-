@@ -212,6 +212,8 @@ button:disabled {
   font-weight: 500;
   color: #6b757b;
   margin-bottom: 16px;
+  opacity: 0.3;
+  transition: opacity 0.4s ease, color 0.4s ease;
 }
 
 .statistics__heading:last-child {
@@ -220,6 +222,11 @@ button:disabled {
 
 .statistics__heading--active {
   color: #2bd97c;
+  opacity: 1; 
+  color: #032b41; 
+  font-weight: 700;
+  border-left: 4px solid #bac8ff;
+  padding-left: 8px;
 }
 
 .statistics__wrapper {
