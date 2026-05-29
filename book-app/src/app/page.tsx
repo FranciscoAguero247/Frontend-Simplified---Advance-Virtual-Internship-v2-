@@ -6,11 +6,14 @@ import  { AiFillFileText, AiFillBulb, AiFillAudio } from "react-icons/ai";
 import { BsStarFill, BsStarHalf } from "react-icons/bs";
 import { BiCrown } from "react-icons/bi";
 import { RiLeafLine } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { openModal } = useAuthModal();
+  const { openModal, user, loading, logoutUser } = useAuthModal();
+  const router = useRouter();
   const [activeStatOne, setActiveStatOne] = useState(0);
   const [activeStatTwo, setActiveStatTwo] = useState(0);
+
   
   useEffect(() => {
     const intervalOne = setInterval(() => {
@@ -41,7 +44,18 @@ export default function Home() {
             />
         </figure>
         <ul className="nav__list--wrapper">
+          {!loading && user ? (
+            <>
+              <li className="nav__list nav__list--login" onClick={() => router.push("/for-you")}>
+                Dashboard
+              </li>
+              <li className="nav__list nav__list--logout" onClick={logoutUser} style={{ color: "red", cursor: "pointer" }}>
+                Logout
+              </li>
+            </>
+          ) : (
           <li className="nav__list nav__list--login" onClick={openModal} >Login</li>
+          )}
           <li className="nav__list nav__list--mobile">About</li>
           <li className="nav__list nav__list--mobile">Contact</li>
           <li className="nav__list nav__list--mobile">Help</li>
