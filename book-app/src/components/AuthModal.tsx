@@ -17,17 +17,13 @@ import {
 export default function AuthModal() {
   const { isOpen, closeModal } = useAuthModal();
   const router = useRouter();
-  const [isLoginView, setIsLoginView] = useState(true); // Toggles between Login and Register views
+  const [isLoginView, setIsLoginView] = useState(true);
   
-  
-  // Input Form Trackers
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
-  const [message, setMessage] = useState(""); // For password resets
-
-  // If the global state context is set to hidden, don't render anything on screen
+  const [message, setMessage] = useState(""); 
   if (!isOpen) return null;
 
 const handleAuthError = (err: any) => {
@@ -76,7 +72,6 @@ const handleAuthError = (err: any) => {
     }
   };
 
-  // Optional Feature: Reset Password
   const handleForgotPassword = async () => {
     if (!email) {
       setError("Please type your email address above first.");
@@ -91,7 +86,6 @@ const handleAuthError = (err: any) => {
     }
   };
 
-  // Optional Feature: Google Login
   const handleGoogleLogin = async () => {
     setError("");
     const provider = new GoogleAuthProvider();
@@ -147,7 +141,6 @@ const handleAuthError = (err: any) => {
             <span className="auth__separator--text">or</span>
           </div>
 
-          {/* 3. Main Form Context Area */}
           <form className="auth__main--form" onSubmit={handleAuthSubmit}>
             <input 
               className="auth__main--input" 

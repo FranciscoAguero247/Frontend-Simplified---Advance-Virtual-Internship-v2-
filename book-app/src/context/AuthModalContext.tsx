@@ -27,20 +27,14 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  // Global Centralized Logout Action Method
   const logoutUser = async () => {
     try {
       await signOut(auth);
-      // If they log out while inside protected app views, push them back to the landing homepage
-      if (pathname !== "/") {
-        router.push("/");
-      }
     } catch (err) {
       console.error("Logout exception error caught:", err);
     }
   };
 
-  // Real-time Firebase Authentication state structural observer loop
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
