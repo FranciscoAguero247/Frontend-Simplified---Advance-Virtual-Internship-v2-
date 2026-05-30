@@ -49,7 +49,7 @@ export default function ForYouPage() {
         ]);
 
         const selectedData = await selectedRes.json();
-        const recommendedData = await recommendedRes.json();// Simplified global app shell loading state check
+        const recommendedData = await recommendedRes.json();
         const suggestedData = await suggestedRes.json();
 
         if (selectedData && selectedData.length > 0) {
