@@ -11,13 +11,21 @@ import { IoLogOutOutline, IoMenuOutline, IoTimeOutline } from "react-icons/io5";
 
 interface Book {
   id: string;
-  title: string;
   author: string;
+  title: string;
   subTitle: string;
-  imageUrl: string;
-  audioUrl: string;
-  duration: number; // seconds
+  imageLink: string;
+  audioLink: string;
+  totalRating: number;
   averageRating: number;
+  keyIdeas: number;
+  type: string;
+  status: "selected" | "recommended" | "suggested";
+  subscriptionRequired: boolean;
+  summary: string;
+  tags: string[];
+  bookDescription: string;
+  authorDescription: string;
 }
 
 export default function ForYouPage() {
@@ -29,26 +37,23 @@ export default function ForYouPage() {
   const [suggestedBooks, setSuggestedBooks] = useState<Book[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
-  // Guard routing logic
   useEffect(() => {
     if (!loading && !user) {
       router.push("/");
     }
   }, [user, loading, router]);
 
-  // Data pulling engine
   useEffect(() => {
     if (!user) return;
 
     async function fetchDashboardData() {
       try {
         setDataLoading(true);
-        const baseUrl = "https://us-central1-summaristt.cloudfunctions.net/getBooks";
         
         const [selectedRes, recommendedRes, suggestedRes] = await Promise.all([
-          fetch(`${baseUrl}?status=selected`),
-          fetch(`${baseUrl}?status=recommended`),
-          fetch(`${baseUrl}?status=suggested`)
+          fetch("https://us-central1-summaristt.cloudfunctions.net/getBooks?status=selected"),
+          fetch("https://us-central1-summaristt.cloudfunctions.net/getBooks?status=recommended"),
+          fetch("https://us-central1-summaristt.cloudfunctions.net/getBooks?status=suggested")
         ]);
 
         const selectedData = await selectedRes.json();
@@ -70,13 +75,6 @@ export default function ForYouPage() {
     fetchDashboardData();
   }, [user]);
 
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
-  
-
   if (loading || dataLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "sans-serif" }}>
@@ -90,8 +88,6 @@ export default function ForYouPage() {
   return (
     <div id="__next">
       <div className="wrapper">
-        
-        {/* --- GLOBAL SEARCH HEADER BAR --- */}
         <div className="search__background">
           <div className="search__wrapper">
             <figure>
@@ -116,7 +112,7 @@ export default function ForYouPage() {
           </div>
         </div>
 
-        {/* --- NAVIGATION SIDEBAR --- */}
+        
         <div className="sidebar__overlay sidebar__overlay--hidden"></div>
         <div className="sidebar">
           <div className="sidebar__logo">
@@ -170,22 +166,19 @@ export default function ForYouPage() {
           </div>
         </div>
 
-        {/* --- MAIN INTERFACE PANELS --- */}
         <div className="row">
           <div className="container">
             <div className="for-you__wrapper">
-              
-              {/* --- MODULE 1: SELECTED JUST FOR YOU --- */}
-              <div className="for-you__title">Selected just for you</div>
+             <div className="for-you__title">Selected just for you</div>
               {selectedBook && (
                 <>
-                  <audio src={selectedBook.audioUrl}></audio>
+                  <audio src={selectedBook.audioLink}></audio>
                   <Link className="selected__book" href={`/book/${selectedBook.id}`}>
                     <div className="selected__book--sub-title">{selectedBook.subTitle}</div>
                     <div className="selected__book--line"></div>
                     <div className="selected__book--content">
-                      <figure className="recommended__book--img-mask" style={{ height: "140px", width: "140px", minWidth: "140px" }}>
-                        <img className="recommended__book--img" src={selectedBook.imageUrl} alt={selectedBook.title} style={{ display: "block" }} />
+                      <figure className="recommended__book--img-mask" style={{ height: "140px", width: "140px", minWidth: "140px", position: "relative" }}>
+                        <img className="recommended__book--img" src={selectedBook.imageLink} alt={selectedBook.title} style={{ display: "block" }} />
                       </figure>
                       <div className="selected__book--text">
                         <div className="selected__book--title">{selectedBook.title}</div>
@@ -195,7 +188,7 @@ export default function ForYouPage() {
                             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1em" width="1em"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path></svg>
                           </div>
                           <div className="selected__book--duration">
-                            {formatDuration(selectedBook.duration)}
+                            3 min 23 sec
                           </div>
                         </div>
                       </div>
@@ -204,28 +197,30 @@ export default function ForYouPage() {
                 </>
               )}
 
-              {/* --- MODULE 2: RECOMMENDED FOR YOU --- */}
               <div>
                 <div className="for-you__title">Recommended For You</div>
                 <div className="for-you__sub--title">We think you’ll like these</div>
                 <div className="for-you__recommended--books">
                   {recommendedBooks.map((book) => (
-                    <Link key={book.id} className="for-you__recommended--books-link" href={`/book/${book.id}`}>
-                      <audio src={book.audioUrl}></audio>
+                    <Link key={book.id} className="for-you__recommended--books-link" href={`/book/${book.id}`} style={{ position: "relative" }}>
+                      <audio src={book.audioLink}></audio>
+                      
+                      {book.subscriptionRequired && (
+                        <div className="book-pill" style={{ position: "absolute", top: "16px", right: "16px", backgroundColor: "#032b41", color: "white", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: "600", zIndex: 10 }}>
+                          Premium
+                        </div>
+                      )}
+
                       <figure className="recommended__book--img-mask">
-                        <img className="recommended__book--img" src={book.imageUrl} alt={book.title} />
+                        <img className="recommended__book--img" src={book.imageLink} alt={book.title} />
                       </figure>
                       <div className="recommended__book--title">{book.title}</div>
                       <div className="recommended__book--author">{book.author}</div>
                       <div className="recommended__book--sub-title">{book.subTitle}</div>
                       <div className="recommended__book--details-wrapper">
                         <div className="recommended__book--details">
-                          <div className="recommended__book--details-icon"><IoTimeOutline /></div>
-                          <div className="recommended__book--details-text">{formatDuration(book.duration)}</div>
-                        </div>
-                        <div className="recommended__book--details">
                           <div className="recommended__book--details-icon"><BsStar /></div>
-                          <div className="recommended__book--details-text">{book.averageRating.toFixed(1)}</div>
+                          <div className="recommended__book--details-text">{book.averageRating?.toFixed(1)}</div>
                         </div>
                       </div>
                     </Link>
@@ -233,28 +228,30 @@ export default function ForYouPage() {
                 </div>
               </div>
 
-              {/* --- MODULE 3: SUGGESTED BOOKS --- */}
               <div>
                 <div className="for-you__title">Suggested Books</div>
                 <div className="for-you__sub--title">Browse those books</div>
                 <div className="for-you__recommended--books">
                   {suggestedBooks.map((book) => (
-                    <Link key={book.id} className="for-you__recommended--books-link" href={`/book/${book.id}`}>
-                      <audio src={book.audioUrl}></audio>
+                    <Link key={book.id} className="for-you__recommended--books-link" href={`/book/${book.id}`} style={{ position: "relative" }}>
+                      <audio src={book.audioLink}></audio>
+
+                      {book.subscriptionRequired && (
+                        <div className="book-pill" style={{ position: "absolute", top: "16px", right: "16px", backgroundColor: "#032b41", color: "white", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: "600", zIndex: 10 }}>
+                          Premium
+                        </div>
+                      )}
+
                       <figure className="recommended__book--img-mask">
-                        <img className="recommended__book--img" src={book.imageUrl} alt={book.title} />
+                        <img className="recommended__book--img" src={book.imageLink} alt={book.title} />
                       </figure>
                       <div className="recommended__book--title">{book.title}</div>
                       <div className="recommended__book--author">{book.author}</div>
                       <div className="recommended__book--sub-title">{book.subTitle}</div>
                       <div className="recommended__book--details-wrapper">
                         <div className="recommended__book--details">
-                          <div className="recommended__book--details-icon"><IoTimeOutline /></div>
-                          <div className="recommended__book--details-text">{formatDuration(book.duration)}</div>
-                        </div>
-                        <div className="recommended__book--details">
                           <div className="recommended__book--details-icon"><BsStar /></div>
-                          <div className="recommended__book--details-text">{book.averageRating.toFixed(1)}</div>
+                          <div className="recommended__book--details-text">{book.averageRating?.toFixed(1)}</div>
                         </div>
                       </div>
                     </Link>
