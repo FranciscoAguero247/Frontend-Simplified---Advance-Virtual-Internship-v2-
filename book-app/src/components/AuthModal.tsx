@@ -55,7 +55,7 @@ const handleAuthError = (err: any) => {
         await createUserWithEmailAndPassword(auth, email, password);
       }
       closeModal();
-      router.push("/for-you");
+      router.refresh();
     } catch (err: any) {
       handleAuthError(err);
     }
@@ -66,7 +66,7 @@ const handleAuthError = (err: any) => {
     try {
       await signInWithEmailAndPassword(auth, "guest@gmail.com", "guest123");
       closeModal();
-      router.push("/for-you");
+      router.refresh();
     } catch (err: any) {
       setError("Guest login account configuration missing in Firebase console.");
     }
@@ -92,7 +92,7 @@ const handleAuthError = (err: any) => {
     try {
       await signInWithPopup(auth, provider);
       closeModal();
-      router.push("/for-you");
+      router.refresh();
     } catch (err: any) {
       console.error("Google Auth Exception:", err.code);
       setError("Google authentication was canceled or failed.");
