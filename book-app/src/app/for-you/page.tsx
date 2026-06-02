@@ -2,10 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuthModal } from "@/context/AuthModalContext";
+import Link from "next/link";
+import Image from 'next/image';
+import { BsStar } from "react-icons/bs";
 import { useMediaAccess } from "@/hooks/useMediaAccess";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
+import SelectedBook from "@/components/SelectedBook";
 import BookCard from "@/components/BookCard";
+
 
 interface Book {
   id: string;
@@ -28,6 +33,7 @@ interface Book {
 
 export default function ForYouPage() {
   const { loading } = useAuthModal();
+
   const { checkAccessAndNavigate } = useMediaAccess();
 
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -79,38 +85,13 @@ export default function ForYouPage() {
         <SearchBar />
         <div className="sidebar__overlay sidebar__overlay--hidden"></div>
         <Sidebar />
+        
         <div className="row">
           <div className="container">
             <div className="for-you__wrapper">
               
               <div className="for-you__title">Selected just for you</div>
-              {selectedBook && (
-                <div 
-                  className="selected__book" 
-                  onClick={() => checkAccessAndNavigate({ id: selectedBook.id, isPremium: selectedBook.subscriptionRequired })}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="selected__book--sub-title">{selectedBook.subTitle}</div>
-                  <div className="selected__book--line"></div>
-                  <div className="selected__book--content">
-                    <figure className="recommended__book--img-mask" style={{ height: "140px", width: "140px", minWidth: "140px", position: "relative" }}>
-                      <img className="recommended__book--img" src={selectedBook.imageLink} alt={selectedBook.title} style={{ display: "block" }} />
-                    </figure>
-                    <div className="selected__book--text">
-                      <div className="selected__book--title">{selectedBook.title}</div>
-                      <div className="selected__book--author">{selectedBook.author}</div>
-                      <div className="selected__book--duration-wrapper">
-                        <div className="selected__book--icon">
-                          <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1em" width="1em">
-                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
-                          </svg>
-                        </div>
-                        <div className="selected__book--duration">3 min 23 sec</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {selectedBook && <SelectedBook book={selectedBook} />}
 
               <div>
                 <div className="for-you__title">Recommended For You</div>
@@ -135,6 +116,7 @@ export default function ForYouPage() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
