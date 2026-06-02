@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 interface GuardedBookInput {
   id: string;
-  isPremium: boolean;
+  subscriptionRequired: boolean;
 }
 
 export function useMediaAccess() {
@@ -22,7 +22,7 @@ export function useMediaAccess() {
       return;
     }
 
-    if (book.isPremium && !isSubscribed) {
+    if (book.subscriptionRequired && !isSubscribed) {
       router.push("/choose-plan");
       return;
     }
