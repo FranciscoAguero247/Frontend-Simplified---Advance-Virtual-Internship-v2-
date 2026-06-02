@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuthModal } from "@/context/AuthModalContext";
-import Link from "next/link";
-import Image from 'next/image';
-import { BsStar } from "react-icons/bs";
 import { useMediaAccess } from "@/hooks/useMediaAccess";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
+import BookCard from "@/components/BookCard";
 
 interface Book {
   id: string;
@@ -30,7 +28,6 @@ interface Book {
 
 export default function ForYouPage() {
   const { loading } = useAuthModal();
-
   const { checkAccessAndNavigate } = useMediaAccess();
 
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -85,32 +82,34 @@ export default function ForYouPage() {
         <div className="row">
           <div className="container">
             <div className="for-you__wrapper">
+              
               <div className="for-you__title">Selected just for you</div>
               {selectedBook && (
-                <>
-                  <audio src={selectedBook.audioLink}></audio>
-                  <Link className="selected__book" href={`/book/${selectedBook.id}`}>
-                    <div className="selected__book--sub-title">{selectedBook.subTitle}</div>
-                    <div className="selected__book--line"></div>
-                    <div className="selected__book--content">
-                      <figure className="recommended__book--img-mask" style={{ height: "140px", width: "140px", minWidth: "140px", position: "relative" }}>
-                        <img className="recommended__book--img" src={selectedBook.imageLink} alt={selectedBook.title} style={{ display: "block" }} />
-                      </figure>
-                      <div className="selected__book--text">
-                        <div className="selected__book--title">{selectedBook.title}</div>
-                        <div className="selected__book--author">{selectedBook.author}</div>
-                        <div className="selected__book--duration-wrapper">
-                          <div className="selected__book--icon">
-                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1em" width="1em"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path></svg>
-                          </div>
-                          <div className="selected__book--duration">
-                            3 min 23 sec
-                          </div>
+                <div 
+                  className="selected__book" 
+                  onClick={() => checkAccessAndNavigate({ id: selectedBook.id, isPremium: selectedBook.subscriptionRequired })}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="selected__book--sub-title">{selectedBook.subTitle}</div>
+                  <div className="selected__book--line"></div>
+                  <div className="selected__book--content">
+                    <figure className="recommended__book--img-mask" style={{ height: "140px", width: "140px", minWidth: "140px", position: "relative" }}>
+                      <img className="recommended__book--img" src={selectedBook.imageLink} alt={selectedBook.title} style={{ display: "block" }} />
+                    </figure>
+                    <div className="selected__book--text">
+                      <div className="selected__book--title">{selectedBook.title}</div>
+                      <div className="selected__book--author">{selectedBook.author}</div>
+                      <div className="selected__book--duration-wrapper">
+                        <div className="selected__book--icon">
+                          <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 16 16" height="1em" width="1em">
+                            <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
+                          </svg>
                         </div>
+                        <div className="selected__book--duration">3 min 23 sec</div>
                       </div>
                     </div>
-                  </Link>
-                </>
+                  </div>
+                </div>
               )}
 
               <div>
@@ -118,28 +117,7 @@ export default function ForYouPage() {
                 <div className="for-you__sub--title">We think you’ll like these</div>
                 <div className="for-you__recommended--books">
                   {recommendedBooks.map((book) => (
-                    <Link key={book.id} className="for-you__recommended--books-link" href={`/book/${book.id}`} style={{ position: "relative" }}>
-                      <audio src={book.audioLink}></audio>
-                      
-                      {book.subscriptionRequired && (
-                        <div className="book-pill" style={{ position: "absolute", top: "16px", right: "16px", backgroundColor: "#032b41", color: "white", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: "600", zIndex: 10 }}>
-                          Premium
-                        </div>
-                      )}
-
-                      <figure className="recommended__book--img-mask">
-                        <img className="recommended__book--img" src={book.imageLink} alt={book.title} />
-                      </figure>
-                      <div className="recommended__book--title">{book.title}</div>
-                      <div className="recommended__book--author">{book.author}</div>
-                      <div className="recommended__book--sub-title">{book.subTitle}</div>
-                      <div className="recommended__book--details-wrapper">
-                        <div className="recommended__book--details">
-                          <div className="recommended__book--details-icon"><BsStar /></div>
-                          <div className="recommended__book--details-text">{book.averageRating?.toFixed(1)}</div>
-                        </div>
-                      </div>
-                    </Link>
+                    <BookCard key={book.id} book={book} />
                   ))}
                 </div>
               </div>
@@ -149,28 +127,7 @@ export default function ForYouPage() {
                 <div className="for-you__sub--title">Browse those books</div>
                 <div className="for-you__recommended--books">
                   {suggestedBooks.map((book) => (
-                    <Link key={book.id} className="for-you__recommended--books-link" href={`/book/${book.id}`} style={{ position: "relative" }}>
-                      <audio src={book.audioLink}></audio>
-
-                      {book.subscriptionRequired && (
-                        <div className="book-pill" style={{ position: "absolute", top: "16px", right: "16px", backgroundColor: "#032b41", color: "white", padding: "2px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: "600", zIndex: 10 }}>
-                          Premium
-                        </div>
-                      )}
-
-                      <figure className="recommended__book--img-mask">
-                        <img className="recommended__book--img" src={book.imageLink} alt={book.title} />
-                      </figure>
-                      <div className="recommended__book--title">{book.title}</div>
-                      <div className="recommended__book--author">{book.author}</div>
-                      <div className="recommended__book--sub-title">{book.subTitle}</div>
-                      <div className="recommended__book--details-wrapper">
-                        <div className="recommended__book--details">
-                          <div className="recommended__book--details-icon"><BsStar /></div>
-                          <div className="recommended__book--details-text">{book.averageRating?.toFixed(1)}</div>
-                        </div>
-                      </div>
-                    </Link>
+                    <BookCard key={book.id} book={book} />
                   ))}
                 </div>
               </div>
@@ -178,7 +135,6 @@ export default function ForYouPage() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
