@@ -631,6 +631,15 @@ input {
     height: 40px
 }
 
+.sidebar__bottom {
+    width: 100%;
+    padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
 .sidebar__link--wrapper {
     display: flex;
     align-items: center;
