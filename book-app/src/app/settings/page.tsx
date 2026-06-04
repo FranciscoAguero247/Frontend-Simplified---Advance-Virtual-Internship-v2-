@@ -60,7 +60,7 @@ export default function SettingsPage() {
         setUserEmail(null);
         setSubscriptionPlan("basic");
         setLoading(false);
-        openModal();
+        
         
         if (unsubscribeFromSubscriptions) {
           unsubscribeFromSubscriptions();
@@ -73,7 +73,7 @@ export default function SettingsPage() {
       unsubscribeFromAuth();
       if (unsubscribeFromSubscriptions) unsubscribeFromSubscriptions();
     };
-  }, [closeModal, openModal]);
+  }, [closeModal]);
 
   const handleUpgradeRedirect = () => {
     router.push("/choose-plan");
