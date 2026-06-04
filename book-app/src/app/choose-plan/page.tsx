@@ -1,8 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { getCheckoutUrl } from "./stripePayment";
 import AccordionItem from "./AccordionItem";
+
+const STRIPE_PRICE_IDS = {
+  yearly: "price_1TeNJgAt1gkHtGQQEwVrwXSn", 
+  monthly: "price_1TeNGcAt1gkHtGQQFajfqaDg",
+};
 
 const FAQ_DATA = [
   {
@@ -28,17 +34,31 @@ const FAQ_DATA = [
 ];
 
 export default function ChoosePlanPage() {
+    const router = useRouter();
   const [activePlan, setActivePlan] = useState<"yearly" | "monthly">("yearly");
+  const [loading, setLoading] = useState(false);
   
   const [openAccordion, setOpenAccordion] = useState<string | null>("trial");
+
+  const firebaseAppInstance = {};
 
   const toggleAccordion = (id: string) => {
     setOpenAccordion(openAccordion === id ? null : id);
   };
 
-  const handleCheckoutRedirect = () => {
-    console.log(`Initializing backend checkout processor for tier: ${activePlan}`);
-    // Your Stripe integration or subscription update logic goes here
+  const handleCheckoutRedirect = async () => {
+    try {
+      setLoading(true);
+      const selectedPriceId = STRIPE_PRICE_IDS[activePlan];
+      
+      const checkoutUrl = await getCheckoutUrl(firebaseAppInstance, selectedPriceId);
+      
+      router.push(checkoutUrl);
+    } catch (error) {
+      console.error("Payment pipeline routing interruption:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -136,9 +156,14 @@ export default function ChoosePlanPage() {
 
               <div className="plan__card--cta">
                 <span className="btn--wrapper">
-                  <button className="btn" style={{ width: "300px" }} onClick={handleCheckoutRedirect}>
+                  <button 
+                    className="btn" 
+                    disabled={loading} 
+                    style={{ width: "300px" }} 
+                    onClick={handleCheckoutRedirect}
+                    >
                     <span>
-                      {activePlan === "yearly" ? "Start your free 7-day trial" : "Get Premium Monthly"}
+                      {loading ? "Processing..." : activePlan === "yearly" ? "Start your free 7-day trial" : "Get Premium Monthly"}
                     </span>
                   </button>
                 </span>

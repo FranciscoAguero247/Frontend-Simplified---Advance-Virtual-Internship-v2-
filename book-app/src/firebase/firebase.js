@@ -9,6 +9,8 @@ import {
   signInWithPopup
 } from "firebase/auth";
 
+import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBoc6GE9OMks5KNQbK_fCorTjzPEj7TZYo",
   authDomain: "summarist-bc329.firebaseapp.com",
@@ -21,9 +23,11 @@ const firebaseConfig = {
 // Initialize Firebase for Server-Side Rendering compatibility
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 export { 
-  auth, 
+  auth,
+  db , 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut,
