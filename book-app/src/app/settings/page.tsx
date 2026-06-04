@@ -4,30 +4,28 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
-
-// Modular project components
+import { useAuthModal } from "@/context/AuthModalContext";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import AuthModal from "@/components/AuthModal";
 
 export default function SettingsPage() {
   const router = useRouter();
-
+  const { isOpen, openModal, closeModal } = useAuthModal();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserEmail(user.email);
         setIsPremium(false); 
-        setIsAuthModalOpen(false);
+        closeModal();
       } else {
         setUserEmail(null);
         setIsPremium(false);
-        setIsAuthModalOpen(true);
+        openModal();
       }
       setLoading(false);
     });
@@ -37,13 +35,11 @@ export default function SettingsPage() {
 
   const handleSubscriptionAction = () => {
     if (!userEmail) {
-      setIsAuthModalOpen(true);
+      openModal();
       return;
     }
 
     if (isPremium) {
-      // If your backend setup has a Stripe portal redirect, trigger it here.
-      // Otherwise, keep track of subscription adjustments via your billing system.
       console.log("Redirecting to customer billing portal...");
     } else {
       router.push("/choose-plan");
@@ -95,7 +91,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 className="btn settings__upgrade--btn" 
-                onClick={() => setIsAuthModalOpen(true)}
+                onClick={openModal}
               >
                 Login
               </button>
@@ -104,9 +100,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {isAuthModalOpen && (
-        <AuthModal closeModal={() => setIsAuthModalOpen(false)} />
-      )}
+    <AuthModal />
     </div>
   );
 }
