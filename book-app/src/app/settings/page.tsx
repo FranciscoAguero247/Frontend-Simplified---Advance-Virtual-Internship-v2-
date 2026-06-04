@@ -2,49 +2,87 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { collection, query, where, onSnapshot } from "firebase/firestore"; 
+import { auth, db } from "@/firebase/firebase";
 import { useAuthModal } from "@/context/AuthModalContext";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import AuthModal from "@/components/AuthModal";
-import Image from "next/image";
+
+type SubscriptionPlan = "basic" | "premium" | "premium-plus";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { isOpen, openModal, closeModal } = useAuthModal();
+  const { openModal, closeModal } = useAuthModal();
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [isPremium, setIsPremium] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan>("basic");
 
- useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+  useEffect(() => {
+    let unsubscribeFromSubscriptions: (() => void) | null = null;
+
+    const unsubscribeFromAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserEmail(user.email);
-        setIsPremium(false); 
         closeModal();
+
+        const subscriptionsRef = collection(db, "customers", user.uid, "subscriptions");
+        const q = query(subscriptionsRef, where("status", "in", ["active", "trialing"]));
+
+        unsubscribeFromSubscriptions = onSnapshot(q, (snapshot) => {
+          if (!snapshot.empty) {
+            const docData = snapshot.docs[0].data();
+            const role = docData.role; 
+            const priceId = docData.items?.[0]?.price?.id;
+            const STRIPE_PREMIUM_PRICE_ID = "price_1TeNGcAt1gkHtGQQFajfqaDg"; 
+            const STRIPE_PREMIUM_PLUS_PRICE_ID = "price_1TeNJgAt1gkHtGQQEwVrwXSn";
+
+            if (role === "premium-plus" || priceId === STRIPE_PREMIUM_PLUS_PRICE_ID) {
+              setSubscriptionPlan("premium-plus");
+            } else if (role === "premium" || priceId === STRIPE_PREMIUM_PRICE_ID) {
+              setSubscriptionPlan("premium");
+            } else {
+              setSubscriptionPlan("premium");
+            }
+          } else {
+            setSubscriptionPlan("basic");
+          }
+          setLoading(false);
+        }, (error) => {
+          console.error("Error watching subscription collection:", error);
+          setSubscriptionPlan("basic");
+          setLoading(false);
+        });
+
       } else {
         setUserEmail(null);
-        setIsPremium(false);
+        setSubscriptionPlan("basic");
+        setLoading(false);
         openModal();
+        
+        if (unsubscribeFromSubscriptions) {
+          unsubscribeFromSubscriptions();
+          unsubscribeFromSubscriptions = null;
+        }
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribeFromAuth();
+      if (unsubscribeFromSubscriptions) unsubscribeFromSubscriptions();
+    };
+  }, [closeModal, openModal]);
 
-  const handleSubscriptionAction = () => {
-    if (!userEmail) {
-      openModal();
-      return;
-    }
+  const handleUpgradeRedirect = () => {
+    router.push("/choose-plan");
+  };
 
-    if (isPremium) {
-      console.log("Redirecting to customer billing portal...");
-    } else {
-      router.push("/choose-plan");
-    }
+  const getPlanDisplayName = (plan: SubscriptionPlan) => {
+    if (plan === "premium-plus") return "Premium-Plus";
+    if (plan === "premium") return "Premium";
+    return "Basic";
   };
 
   if (loading) {
@@ -58,7 +96,7 @@ export default function SettingsPage() {
   return (
     <div className="wrapper">
       <SearchBar />
-
+      
       <Sidebar />
 
       <div className="container">
@@ -70,14 +108,17 @@ export default function SettingsPage() {
               <div className="setting__content">
                 <div className="settings__sub--title">Your Subscription plan</div>
                 <div className="settings__text">
-                  {isPremium ? "Premium" : "Basic"}
+                  {getPlanDisplayName(subscriptionPlan)}
                 </div>
-                <button 
-                  className="btn settings__upgrade--btn" 
-                  onClick={handleSubscriptionAction}
-                >
-                  {isPremium ? "Manage Subscription" : "Upgrade to Premium"}
-                </button>
+                
+                {subscriptionPlan === "basic" && (
+                  <button 
+                    className="btn settings__upgrade--btn" 
+                    onClick={handleUpgradeRedirect}
+                  >
+                    Upgrade to Premium
+                  </button>
+                )}
               </div>
 
               <div className="setting__content">
@@ -86,9 +127,9 @@ export default function SettingsPage() {
               </div>
             </>
           ) : (
-           <div className="settings__login--wrapper">
+            <div className="settings__login--wrapper">
               <Image 
-                src="/assets/login.png"
+                src="/assets/login.png" 
                 alt="login" 
                 width={1033} 
                 height={712} 
@@ -98,10 +139,7 @@ export default function SettingsPage() {
               <div className="settings__login--text">
                 Log in to your account to see your details.
               </div>
-              <button 
-                className="btn settings__login--btn" 
-                onClick={openModal}
-              >
+              <button className="btn settings__login--btn" onClick={openModal}>
                 Login
               </button>
             </div>
@@ -109,7 +147,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-    <AuthModal />
+      <AuthModal />
     </div>
   );
 }
