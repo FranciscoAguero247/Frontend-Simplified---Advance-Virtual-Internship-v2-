@@ -8,6 +8,7 @@ import { useAuthModal } from "@/context/AuthModalContext";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import AuthModal from "@/components/AuthModal";
+import Image from "next/image";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -85,12 +86,20 @@ export default function SettingsPage() {
               </div>
             </>
           ) : (
-            <div className="setting__content">
-              <div className="settings__text" style={{ marginBottom: "1rem" }}>
-                Log in to view and manage your account options.
+           <div className="settings__login--wrapper">
+              <Image 
+                src="/assets/login.png"
+                alt="login" 
+                width={1033} 
+                height={712} 
+                priority
+                style={{ color: "transparent" }}
+              />
+              <div className="settings__login--text">
+                Log in to your account to see your details.
               </div>
               <button 
-                className="btn settings__upgrade--btn" 
+                className="btn settings__login--btn" 
                 onClick={openModal}
               >
                 Login
