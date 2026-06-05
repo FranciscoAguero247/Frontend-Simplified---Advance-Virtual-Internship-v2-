@@ -1,117 +1,66 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { usePathname } from "next/navigation"; // Used to hide component on specific Next.js routes
-import { AiOutlineSearch } from "react-icons/ai";
-import { IoMenuOutline } from "react-icons/io5";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SearchBar() {
-  const pathname = usePathname();
-  const [search, setSearch] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // 1. Hide on Home ("/") and Sales Page ("/choose-plan")
-  if (pathname === "/" || pathname === "/choose-plan") {
-    return null;
-  }
-
-  // 2. Implementation of Debounce & API fetching
   useEffect(() => {
-    // If the search input is empty, clear the results and don't call the API
-    if (!search.trim()) {
-      setResults([]);
-      return;
-    }
+    const currentQuery = searchParams.get("q") || "";
+    setSearchQuery(currentQuery);
+  }, [searchParams]);
 
-    // Set a timer to wait 300ms after the user finishes typing
-    const delayDebounceFn = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `https://us-central1-summaristt.cloudfunctions.net/getBooksByAuthorOrTitle?search=${encodeURIComponent(search)}`
-        );
-        const data = await response.json();
-        setResults(data || []);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
 
-    // CRITICAL: Cleanup function. This clears the 300ms timer every time the user 
-    // presses a key, ensuring the API is only hit 300ms AFTER they completely stop typing.
-    return () => clearTimeout(delayDebounceFn);
-  }, [search]);
+    router.push(`/for-you?q=${encodeURIComponent(searchQuery.trim())}`);
+  };
 
   return (
     <div className="search__background">
       <div className="search__wrapper">
-        <figure>
-          <Image src="/assets/logo.png" alt="Summarist Logo" width={150} height={40} />
+        <figure className="search__logo--wrapper">
+          <img src="/assets/logo.png" alt="" className="search__logo--hidden" style={{ display: "none" }} />
         </figure>
+
         <div className="search__content">
-          <div className="search">
-            <div className="search__input--wrapper" style={{ position: "relative" }}>
+          <form className="search" onSubmit={handleSearchSubmit}>
+            <div className="search__input--wrapper">
               <input
                 className="search__input"
                 placeholder="Search for books"
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <div className="search__icon">
-                <AiOutlineSearch />
-              </div>
-
-              {/* --- Dropdown Results Overlay --- */}
-              {(loading || results.length > 0) && (
-                <div className="search__results--dropdown" style={dropdownStyles}>
-                  {loading ? (
-                    <div style={{ padding: "12px", color: "#666" }}>Searching...</div>
-                  ) : (
-                    results.map((book) => (
-                      <div key={book.id} className="search__result-item" style={itemStyles}>
-                        <div style={{ fontWeight: "bold" }}>{book.title}</div>
-                        <div style={{ fontSize: "12px", color: "#666" }}>{book.author}</div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-              {/* -------------------------------- */}
-
+              
+              <button type="submit" className="search__icon" style={{ background: "none", border: "none", cursor: "pointer" }}>
+                <svg
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 1024 1024"
+                  height="1em"
+                  width="1em"
+                >
+                  <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0 0 11.6 0l43.6-43.5a8.2 8.2 0 0 0 0-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z" />
+                </svg>
+              </button>
             </div>
-          </div>
-          <div className="sidebar__toggle--btn">
-            <IoMenuOutline />
+          </form>
+
+          <div className="sidebar__toggle--btn" style={{ display: "none" }}>
+            <svg stroke="currentColor" fill="none" strokeWidth="0" viewBox="0 0 15 15" height="1em" width="1em">
+              <path fillRule="evenodd" clipRule="evenodd" d="M1.5 3C1.22386 3 1 3.22386 1 3.5C1 3.77614 1.22386 4 1.5 4H13.5C13.7761 4 14 3.77614 14 3.5C14 3.22386 13.7761 3 13.5 3H1.5ZM1 7.5C1 7.22386 1.22386 7 1.5 7H13.5C13.7761 7 14 7.22386 14 7.5C14 7.77614 13.7761 8 13.5 8H1.5C1.22386 8 1 7.77614 1 7.5ZM1 11.5C1 11.2239 1.22386 11 1.5 11H13.5C13.7761 11 14 11.2239 14 11.5C14 11.7761 13.7761 12 13.5 12H1.5C1.22386 12 1 11.7761 1 11.5Z" fill="currentColor" />
+            </svg>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-// Inline styles for the dropdown layout (you can move these to your global/module CSS files)
-const dropdownStyles = {
-  position: "absolute",
-  top: "100%",
-  left: 0,
-  right: 0,
-  backgroundColor: "#fff",
-  border: "1px solid #e5e7eb",
-  borderRadius: "4px",
-  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-  maxHeight: "320px",
-  overflowY: "auto",
-  zIndex: 50,
-  marginTop: "4px",
-};
-
-const itemStyles = {
-  padding: "10px 12px",
-  borderBottom: "1px solid #f3f4f6",
-  cursor: "pointer",
-};
