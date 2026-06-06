@@ -1,9 +1,11 @@
 "use client";
 
+import React from "react";
 import { AuthModalProvider } from "@/context/AuthModalContext";
+import { LibraryProvider } from "@/context/LibraryContext";
 import AuthModal from "@/components/AuthModal";
-import Sidebar from "@/components/Sidebar"; // Import your Sidebar
-import { usePathname } from "next/navigation"; // Hook to check the route
+import Sidebar from "@/components/Sidebar"; 
+import { usePathname } from "next/navigation"; 
 import "./globals.css";
 
 export default function RootLayout({
@@ -20,15 +22,21 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthModalProvider>
-          <div className="app-container">
-            {showSidebar && <Sidebar />}
+          <LibraryProvider>
             
-            <main className="main-content">
-              {children}
-            </main>
-          </div>
-          
-          <AuthModal />
+            <div className="app-container">
+              {showSidebar && (
+                <Sidebar isMobileMenuOpen={false} onToggleMobileMenu={() => {}} />
+              )}
+              
+              <main className="main-content">
+                {children}
+              </main>
+            </div>
+            
+            <AuthModal />
+
+          </LibraryProvider>
         </AuthModalProvider>
       </body>
     </html>
