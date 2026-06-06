@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AiOutlineSearch } from "react-icons/ai";
+import { SearchRowSkeleton } from "@/components/Skeletons";
 
 interface SearchResultBook {
   id: string;
@@ -123,11 +124,14 @@ export default function SearchBar() {
                 )}
               </div>
 
-              {/* FIX: Changed condition to show dropdown whenever open, letting SearchResultsList render the empty state */}
               {isOpen && (
                 <div className="search__results--dropdown">
                   {loading ? (
-                    <div className="search__loading--spinner"></div>
+                    <div className="search__books--wrapper">
+                      <SearchRowSkeleton />
+                      <SearchRowSkeleton />
+                      <SearchRowSkeleton />
+                    </div>
                   ) : (
                     <SearchResultsList 
                       books={results} 
@@ -136,6 +140,7 @@ export default function SearchBar() {
                   )}
                 </div>
               )}
+
             </div>
           </div>
 
@@ -188,16 +193,14 @@ function SearchResultsList({ books, onCloseDropdown }: SearchResultsListProps) {
 
             <figure 
               className="book__image--wrapper" 
-              style={{ height: "80px", width: "80px", minWidth: "80px", position: "relative" }}
+              style={{ height: "80px", width: "80px", minWidth: "80px" }}
             >
-              <Image
+              {/* Standardized native img node layout to stay compliant with global styles */}
+              <img
                 className="book__image"
                 src={safeImage}
                 alt={safeTitle}
-                fill
-                sizes="80px"
-                unoptimized 
-                style={{ objectFit: "cover", display: "block" }}
+                style={{ objectFit: "cover", display: "block", width: "100%", height: "100%" }}
               />
             </figure>
 
