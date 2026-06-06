@@ -73,8 +73,6 @@ export default function ForYouPage() {
         <Sidebar 
           isMobileMenuOpen={false} 
           onToggleMobileMenu={() => {}} 
-          isLoggedIn={false} 
-          onAuthAction={() => {}} 
         />
         
         <div className="row">
