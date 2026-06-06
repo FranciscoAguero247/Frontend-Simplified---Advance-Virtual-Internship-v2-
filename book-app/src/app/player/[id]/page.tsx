@@ -5,9 +5,9 @@ import { useParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import { useAuthModal } from "@/context/AuthModalContext";
-import { IoPlay, IoPause } from "react-icons/io5";
+import { useLibrary } from "@/context/LibraryContext";
 import { PlayerSummarySkeleton, PlayerTrackSkeleton } from "@/components/Skeletons";
-
+import { IoPlay, IoPause } from "react-icons/io5";
 
 interface Book {
   id: string;
@@ -23,6 +23,7 @@ export default function PlayerPage() {
   const params = useParams();
   const bookId = params.id as string;
   const { loading: authLoading } = useAuthModal();
+  const { markAsFinished } = useLibrary();
 
   const [book, setBook] = useState<Book | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
@@ -52,7 +53,13 @@ export default function PlayerPage() {
 
   const onTimeUpdate = () => {
     if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
+      const current = audioRef.current.currentTime;
+      const total = audioRef.current.duration;
+      setCurrentTime(current);
+
+      if (current > 0 && total > 0 && current >= total - 1.5) {
+        markAsFinished(bookId);
+      }
     }
   };
 
@@ -138,7 +145,10 @@ export default function PlayerPage() {
                 src={book.audioLink}
                 onTimeUpdate={onTimeUpdate}
                 onLoadedMetadata={onLoadedMetadata}
-                onEnded={() => setIsPlaying(false)}
+                onEnded={() => {
+                  setIsPlaying(false);
+                  markAsFinished(bookId);
+                }}
               />
             )}
             
