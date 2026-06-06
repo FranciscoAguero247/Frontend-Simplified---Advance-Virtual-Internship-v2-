@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useAuthModal } from "@/context/AuthModalContext";
+import { useAuthModal } from "@/context/AuthModalContext"; // 👈 Access Auth directly inside
 import { AiOutlineHome, AiOutlineSetting, AiOutlineSearch } from "react-icons/ai";
 import { BsBookmark, BsPen } from "react-icons/bs";
 import { FiHelpCircle } from "react-icons/fi";
@@ -17,11 +17,14 @@ interface SidebarProps {
 
 export default function Sidebar({ isMobileMenuOpen, onToggleMobileMenu }: SidebarProps) {
   const pathname = usePathname();
-  const { user, logoutUser, openModal } = useAuthModal();
+  const { user, logoutUser, openModal } = useAuthModal(); // 👈 Destructure active session token
 
   if (pathname === "/" || pathname === "/choose-plan") {
     return null;
   }
+
+  // 🎯 Dynamic evaluation based on internal Auth Context status token
+  const logoHref = user ? "/for-you" : "/";
 
   const handleAuthClick = () => {
     if (isMobileMenuOpen) onToggleMobileMenu();
@@ -44,10 +47,10 @@ export default function Sidebar({ isMobileMenuOpen, onToggleMobileMenu }: Sideba
       />
 
       <aside className={`sidebar ${isMobileMenuOpen ? "sidebar--opened" : ""}`}>
-
         <div className="sidebar__logo">
+          {/* ✅ Completely self-contained conditional SaaS logo routing */}
           <Link 
-            href="/" 
+            href={logoHref} 
             className="sidebar__logo--link"
             style={{ display: 'block', width: '100%', height: 'auto' }}
             onClick={closeMobileMenu} 
