@@ -921,7 +921,7 @@ input {
 .search__input {
     height: 40px;
     width: 100%;
-    padding: 0 16px;
+    padding: 0 56px 0 16px;
     outline: none;
     background-color: #f1f6f4;
     color: #042330;
@@ -934,7 +934,7 @@ input {
     align-items: center;
     position: absolute;
     height: 100%;
-    right: 8px;
+    right: 18px;
     justify-content: flex-end;
     border-left: 2px solid #e1e7ea;
     padding-left: 8px
