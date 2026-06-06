@@ -89,3 +89,27 @@ export function SearchRowSkeleton() {
     </div>
   );
 }
+
+export function PlayerSummarySkeleton() {
+  return (
+    <div className="audio__book--summary" style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+      <div className="skeleton" style={{ height: "32px", width: "40%", marginBottom: "12px" }} />
+      <div className="skeleton" style={{ height: "20px", width: "100%" }} />
+      <div className="skeleton" style={{ height: "20px", width: "95%" }} />
+      <div className="skeleton" style={{ height: "20px", width: "98%" }} />
+      <div className="skeleton" style={{ height: "20px", width: "85%" }} />
+    </div>
+  );
+}
+
+export function PlayerTrackSkeleton() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div className="skeleton" style={{ height: "48px", width: "48px", borderRadius: "4px" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <div className="skeleton" style={{ height: "14px", width: "100px" }} />
+        <div className="skeleton" style={{ height: "12px", width: "70px" }} />
+      </div>
+    </div>
+  );
+}

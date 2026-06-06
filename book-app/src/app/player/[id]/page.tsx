@@ -6,6 +6,8 @@ import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { IoPlay, IoPause } from "react-icons/io5";
+import { PlayerSummarySkeleton, PlayerTrackSkeleton } from "@/components/Skeletons";
+
 
 interface Book {
   id: string;
@@ -115,13 +117,7 @@ export default function PlayerPage() {
 
         <div className="summary">
           {dataLoading ? (
-            <div className="audio__book--summary" style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
-              <div className="skeleton" style={{ height: "32px", width: "40%", marginBottom: "12px" }} />
-              <div className="skeleton" style={{ height: "20px", width: "100%" }} />
-              <div className="skeleton" style={{ height: "20px", width: "95%" }} />
-              <div className="skeleton" style={{ height: "20px", width: "98%" }} />
-              <div className="skeleton" style={{ height: "20px", width: "85%" }} />
-            </div>
+            <PlayerSummarySkeleton />
           ) : (
             book && (
               <div className="audio__book--summary" style={{ fontSize: "16px" }}>
@@ -148,13 +144,7 @@ export default function PlayerPage() {
             
             <div className="audio__track--wrapper">
               {dataLoading ? (
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div className="skeleton" style={{ height: "48px", width: "48px", borderRadius: "4px" }} />
-                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                    <div className="skeleton" style={{ height: "14px", width: "100px" }} />
-                    <div className="skeleton" style={{ height: "12px", width: "70px" }} />
-                  </div>
-                </div>
+                <PlayerTrackSkeleton />
               ) : (
                 book && (
                   <>

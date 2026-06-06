@@ -65,14 +65,6 @@ export default function ForYouPage() {
     fetchDashboardData();
   }, []);
 
-  if (authLoading) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "sans-serif" }}>
-        <h2 style={{ color: "#032b41", fontWeight: 500 }}>Setting up your secure workspace...</h2>
-      </div>
-    );
-  }
-
   return (
     <div id="__next">
       <div className="wrapper">
