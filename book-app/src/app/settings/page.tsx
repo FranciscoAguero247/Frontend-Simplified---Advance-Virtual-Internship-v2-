@@ -10,6 +10,7 @@ import { useAuthModal } from "@/context/AuthModalContext";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import AuthModal from "@/components/AuthModal";
+import { SettingsSkeleton } from "@/components/Skeletons";
 
 type SubscriptionPlan = "basic" | "premium" | "premium-plus";
 
@@ -61,7 +62,6 @@ export default function SettingsPage() {
         setSubscriptionPlan("basic");
         setLoading(false);
         
-        
         if (unsubscribeFromSubscriptions) {
           unsubscribeFromSubscriptions();
           unsubscribeFromSubscriptions = null;
@@ -85,69 +85,62 @@ export default function SettingsPage() {
     return "Basic";
   };
 
-  if (loading) {
-    return (
-      <div className="wrapper" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <div className="settings__text">Loading parameters...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="wrapper">
-      <SearchBar />
-      
-      <Sidebar />
+  <div className="wrapper">
+    <SearchBar />
+    <Sidebar isMobileMenuOpen={false} onToggleMobileMenu={() => {}} />
 
-      <div className="container">
-        <div className="row">
-          <div className="section__title page__title">Settings</div>
-
-          {userEmail ? (
-            <>
-              <div className="setting__content">
-                <div className="settings__sub--title">Your Subscription plan</div>
-                <div className="settings__text">
-                  {getPlanDisplayName(subscriptionPlan)}
-                </div>
-                
-                {subscriptionPlan === "basic" && (
-                  <button 
-                    className="btn settings__upgrade--btn" 
-                    onClick={handleUpgradeRedirect}
-                  >
-                    Upgrade to Premium
-                  </button>
-                )}
+    <div className="container">
+      <div className="row">
+        <div className="section__title page__title">Settings</div>
+        
+        {loading ? (
+          <SettingsSkeleton />
+        ) : userEmail ? (
+          <>
+            <div className="setting__content">
+              <div className="settings__sub--title">Your Subscription plan</div>
+              <div className="settings__text">
+                {getPlanDisplayName(subscriptionPlan)}
               </div>
-
-              <div className="setting__content">
-                <div className="settings__sub--title">Email</div>
-                <div className="settings__text">{userEmail}</div>
-              </div>
-            </>
-          ) : (
-            <div className="settings__login--wrapper">
-              <Image 
-                src="/assets/login.png" 
-                alt="login" 
-                width={1033} 
-                height={712} 
-                priority
-                style={{ color: "transparent" }}
-              />
-              <div className="settings__login--text">
-                Log in to your account to see your details.
-              </div>
-              <button className="btn settings__login--btn" onClick={openModal}>
-                Login
-              </button>
+              
+              {subscriptionPlan === "basic" && (
+                <button 
+                  className="btn settings__upgrade--btn" 
+                  onClick={handleUpgradeRedirect}
+                >
+                  Upgrade to Premium
+                </button>
+              )}
             </div>
-          )}
-        </div>
-      </div>
 
-      <AuthModal />
+            <div className="setting__content">
+              <div className="settings__sub--title">Email</div>
+              <div className="settings__text">{userEmail}</div>
+            </div>
+          </>
+        ) : (
+          <div className="settings__login--wrapper">
+            <Image 
+              src="/assets/login.png" 
+              alt="login" 
+              width={1033} 
+              height={712} 
+              priority
+              style={{ color: "transparent" }}
+            />
+            <div className="settings__login--text">
+              Log in to your account to see your details.
+            </div>
+            <button className="btn settings__login--btn" onClick={openModal}>
+              Login
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-  );
+
+    <AuthModal />
+  </div>
+);
 }

@@ -79,10 +79,8 @@ export function SettingsSkeleton() {
 export function SearchRowSkeleton() {
   return (
     <div className="search__book--link" style={{ pointerEvents: "none" }}>
-      {/* Box match for the 80x80 book cover */}
       <div className="skeleton" style={{ height: "80px", width: "80px", minWidth: "80px", borderRadius: "4px" }} />
       
-      {/* Text rows layout mimicry */}
       <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
         <div className="skeleton" style={{ height: "16px", width: "60%" }} />
         <div className="skeleton" style={{ height: "14px", width: "40%" }} />
