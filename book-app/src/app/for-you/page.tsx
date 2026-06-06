@@ -2,15 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuthModal } from "@/context/AuthModalContext";
-import Link from "next/link";
-import Image from 'next/image';
-import { BsStar } from "react-icons/bs";
-import { useMediaAccess } from "@/hooks/useMediaAccess";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import SelectedBook from "@/components/SelectedBook";
 import BookCard from "@/components/BookCard";
-
+import { BookRowSkeleton, SelectedBookSkeleton } from "@/components/Skeletons";
 
 interface Book {
   id: string;
@@ -32,10 +28,8 @@ interface Book {
 }
 
 export default function ForYouPage() {
-  const { loading } = useAuthModal();
-
-  const { checkAccessAndNavigate } = useMediaAccess();
-
+  const { loading: authLoading } = useAuthModal();
+  
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
   const [suggestedBooks, setSuggestedBooks] = useState<Book[]>([]);
@@ -71,10 +65,10 @@ export default function ForYouPage() {
     fetchDashboardData();
   }, []);
 
-  if (loading || dataLoading) {
+  if (authLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "sans-serif" }}>
-        <h2 style={{ color: "#032b41", fontWeight: 500 }}>Loading your personalized view...</h2>
+        <h2 style={{ color: "#032b41", fontWeight: 500 }}>Setting up your secure workspace...</h2>
       </div>
     );
   }
@@ -84,22 +78,35 @@ export default function ForYouPage() {
       <div className="wrapper">
         <SearchBar />
         <div className="sidebar__overlay sidebar__overlay--hidden"></div>
-        <Sidebar />
+        <Sidebar 
+          isMobileMenuOpen={false} 
+          onToggleMobileMenu={() => {}} 
+          isLoggedIn={false} 
+          onAuthAction={() => {}} 
+        />
         
         <div className="row">
           <div className="container">
             <div className="for-you__wrapper">
               
               <div className="for-you__title">Selected just for you</div>
-              {selectedBook && <SelectedBook book={selectedBook} />}
+              {dataLoading ? (
+                <SelectedBookSkeleton />
+              ) : (
+                selectedBook && <SelectedBook book={selectedBook} />
+              )}
 
               <div>
                 <div className="for-you__title">Recommended For You</div>
                 <div className="for-you__sub--title">We think you’ll like these</div>
                 <div className="for-you__recommended--books">
-                  {recommendedBooks.map((book) => (
-                    <BookCard key={book.id} book={book} />
-                  ))}
+                  {dataLoading ? (
+                    <BookRowSkeleton />
+                  ) : (
+                    recommendedBooks.map((book) => (
+                      <BookCard key={book.id} book={book} />
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -107,9 +114,13 @@ export default function ForYouPage() {
                 <div className="for-you__title">Suggested Books</div>
                 <div className="for-you__sub--title">Browse those books</div>
                 <div className="for-you__recommended--books">
-                  {suggestedBooks.map((book) => (
-                    <BookCard key={book.id} book={book} />
-                  ))}
+                  {dataLoading ? (
+                    <BookRowSkeleton />
+                  ) : (
+                    suggestedBooks.map((book) => (
+                      <BookCard key={book.id} book={book} />
+                    ))
+                  )}
                 </div>
               </div>
 

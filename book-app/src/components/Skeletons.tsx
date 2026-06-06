@@ -2,7 +2,6 @@
 
 import React from "react";
 
-// Individual Book Card Skeleton for horizontal slider structures
 export function BookCardSkeleton() {
   return (
     <div className="for-you__recommended--books-link style={{ cursor: 'default' }}">
@@ -19,7 +18,6 @@ export function BookCardSkeleton() {
   );
 }
 
-// Slider Row Group Loading State (For You / Home Rows)
 export function BookRowSkeleton() {
   return (
     <div className="recommended__books--skeleton-wrapper">
@@ -32,24 +30,20 @@ export function BookRowSkeleton() {
   );
 }
 
-// Single Highlighted/Selected Book Banner Skeleton
 export function SelectedBookSkeleton() {
   return (
     <div className="selected__book--skeleton skeleton" style={{ borderRadius: "4px" }} />
   );
 }
 
-// Individual Book View Page Skeleton
 export function BookPageSkeleton() {
   return (
     <div className="container">
       <div className="row">
         <div className="inner__book--skeleton">
-          {/* Cover Mask */}
           <div className="inner__book--skeleton-img" style={{ minWidth: "200px" }}>
             <div className="book__image--skeleton skeleton" style={{ height: "260px", width: "172px" }} />
           </div>
-          {/* Metadata Block */}
           <div className="inner__book--skeleton-content" style={{ width: "100%", display: "flex", flexDirection: "column", gap: "16px" }}>
             <div className="skeleton" style={{ height: "36px", width: "60%" }} />
             <div className="skeleton" style={{ height: "20px", width: "40%" }} />
@@ -65,7 +59,6 @@ export function BookPageSkeleton() {
   );
 }
 
-// Settings Page Account Detail Row Skeletons
 export function SettingsSkeleton() {
   return (
     <div className="container">
