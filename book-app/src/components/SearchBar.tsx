@@ -88,10 +88,7 @@ export default function SearchBar() {
   return (
     <div className="search__background">
       <div className="search__wrapper">
-        <figure style={{ cursor: "pointer" }} onClick={() => router.push("/for-you")}>
-          <Image src="/assets/logo.png" alt="Summarist Logo" width={150} height={40} priority />
-        </figure>
-
+        <div style={{ width: "150px" }} aria-hidden="true" />
         <div className="search__content">
           <div className="search" ref={searchRef}>
             <div className="search__input--wrapper" style={{ position: "relative" }}>
