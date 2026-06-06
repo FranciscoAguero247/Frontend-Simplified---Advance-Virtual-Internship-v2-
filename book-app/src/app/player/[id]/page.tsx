@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import Sidebar from "@/components/Sidebar";
 import SearchBar from "@/components/SearchBar";
 import { useAuthModal } from "@/context/AuthModalContext";
@@ -26,14 +25,12 @@ export default function PlayerPage() {
   const [book, setBook] = useState<Book | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
   
-  // Audio Engine Local States
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Fetch Target Book Details
   useEffect(() => {
     if (!bookId) return;
     async function fetchBookForPlayer() {
@@ -51,7 +48,6 @@ export default function PlayerPage() {
     fetchBookForPlayer();
   }, [bookId]);
 
-  // Sync state tracking variables with Native HTMLAudioElement
   const onTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
@@ -83,7 +79,6 @@ export default function PlayerPage() {
     }
   };
 
-  // Skip Ahead / Rewind by 15-second offsets
   const adjustTime = (amount: number) => {
     if (audioRef.current) {
       let newTime = audioRef.current.currentTime + amount;
@@ -94,7 +89,6 @@ export default function PlayerPage() {
     }
   };
 
-  // Helper formatting engine to convert raw seconds to human readable timestamps (MM:SS)
   const formatTime = (timeInSeconds: number) => {
     if (isNaN(timeInSeconds)) return "00:00";
     const minutes = Math.floor(timeInSeconds / 60);
@@ -102,15 +96,7 @@ export default function PlayerPage() {
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (authLoading || dataLoading) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "sans-serif" }}>
-        <h2 style={{ color: "#032b41", fontWeight: 500 }}>Loading media player records...</h2>
-      </div>
-    );
-  }
-
-  if (!book) {
+  if (!authLoading && !dataLoading && !book) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "sans-serif" }}>
         <h2 style={{ color: "#032b41", fontWeight: 500 }}>Book metrics metadata not found.</h2>
@@ -125,56 +111,88 @@ export default function PlayerPage() {
       <div className="wrapper">
         <SearchBar />
         <div className="sidebar__overlay sidebar__overlay--hidden"></div>
-        <Sidebar />
+        <Sidebar isMobileMenuOpen={false} onToggleMobileMenu={() => {}} />
 
         <div className="summary">
-          <div className="audio__book--summary" style={{ fontSize: "16px" }}>
-            <div className="audio__book--summary-title">
-              <b>{book.title}</b>
+          {dataLoading ? (
+            <div className="audio__book--summary" style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+              <div className="skeleton" style={{ height: "32px", width: "40%", marginBottom: "12px" }} />
+              <div className="skeleton" style={{ height: "20px", width: "100%" }} />
+              <div className="skeleton" style={{ height: "20px", width: "95%" }} />
+              <div className="skeleton" style={{ height: "20px", width: "98%" }} />
+              <div className="skeleton" style={{ height: "20px", width: "85%" }} />
             </div>
-            <div className="audio__book--summary-text">
-              {book.summary}
-            </div>
-          </div>
+          ) : (
+            book && (
+              <div className="audio__book--summary" style={{ fontSize: "16px" }}>
+                <div className="audio__book--summary-title">
+                  <b>{book.title}</b>
+                </div>
+                <div className="audio__book--summary-text">
+                  {book.summary}
+                </div>
+              </div>
+            )
+          )}
 
           <div className="audio__wrapper">
-            <audio 
-              ref={audioRef}
-              src={book.audioLink}
-              onTimeUpdate={onTimeUpdate}
-              onLoadedMetadata={onLoadedMetadata}
-              onEnded={() => setIsPlaying(false)}
-            />
+            {book && (
+              <audio 
+                ref={audioRef}
+                src={book.audioLink}
+                onTimeUpdate={onTimeUpdate}
+                onLoadedMetadata={onLoadedMetadata}
+                onEnded={() => setIsPlaying(false)}
+              />
+            )}
             
             <div className="audio__track--wrapper">
-              <figure className="audio__track--image-mask">
-                <figure className="book__image--wrapper" style={{ height: "48px", width: "48px", minWidth: "48px", position: "relative" }}>
-                  <img className="book__image" src={book.imageLink} alt={book.title} style={{ display: "block" }} />
-                </figure>
-              </figure>
-              <div className="audio__track--details-wrapper">
-                <div className="audio__track--title">{book.title}</div>
-                <div className="audio__track--author">{book.author}</div>
-              </div>
+              {dataLoading ? (
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div className="skeleton" style={{ height: "48px", width: "48px", borderRadius: "4px" }} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <div className="skeleton" style={{ height: "14px", width: "100px" }} />
+                    <div className="skeleton" style={{ height: "12px", width: "70px" }} />
+                  </div>
+                </div>
+              ) : (
+                book && (
+                  <>
+                    <figure className="audio__track--image-mask">
+                      <figure className="book__image--wrapper" style={{ height: "48px", width: "48px", minWidth: "48px", position: "relative" }}>
+                        <img className="book__image" src={book.imageLink} alt={book.title} style={{ display: "block" }} />
+                      </figure>
+                    </figure>
+                    <div className="audio__track--details-wrapper">
+                      <div className="audio__track--title">{book.title}</div>
+                      <div className="audio__track--author">{book.author}</div>
+                    </div>
+                  </>
+                )
+              )}
             </div>
 
             <div className="audio__controls--wrapper">
               <div className="audio__controls">
-                <button className="audio__controls--btn" onClick={() => adjustTime(-15)}>
+                <button className="audio__controls--btn" onClick={() => adjustTime(-15)} disabled={dataLoading}>
                   <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path fill="none" stroke="#000" strokeWidth="2" d="M3.11111111,7.55555556 C4.66955145,4.26701301 8.0700311,2 12,2 C17.5228475,2 22,6.4771525 22,12 C22,17.5228475 17.5228475,22 12,22 L12,22 C6.4771525,22 2,17.5228475 2,12 M2,4 L2,8 L6,8 M9,16 L9,9 L7,9.53333333 M17,12 C17,10 15.9999999,8.5 14.5,8.5 C13.0000001,8.5 12,10 12,12 C12,14 13,15.5000001 14.5,15.5 C16,15.4999999 17,14 17,12 Z M14.5,8.5 C16.9253741,8.5 17,11 17,12 C17,13 17,15.5 14.5,15.5 C12,15.5 12,13 12,12 C12,11 12.059,8.5 14.5,8.5 Z"></path>
                   </svg>
                 </button>
 
-                <button className="audio__controls--btn audio__controls--btn-play" onClick={togglePlay}>
+                <button className="audio__controls--btn audio__controls--btn-play" onClick={togglePlay} disabled={dataLoading}>
                   {isPlaying ? (
-                    <IoPause className="audio__controls--play-icon" />
+                    <div className="audio__controls--play-icon">
+                      <IoPause />
+                    </div>
                   ) : (
-                    <IoPlay className="audio__controls--play-icon" />
+                    <div className="audio__controls--play-icon">
+                      <IoPlay />
+                    </div>
                   )}
                 </button>
 
-                <button className="audio__controls--btn" onClick={() => adjustTime(15)}>
+                <button className="audio__controls--btn" onClick={() => adjustTime(15)} disabled={dataLoading}>
                   <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path fill="none" stroke="#000" strokeWidth="2" d="M20.8888889,7.55555556 C19.3304485,4.26701301 15.9299689,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 L12,22 C17.5228475,22 22,17.5228475 22,12 M22,4 L22,8 L18,8 M9,16 L9,9 L7,9.53333333 M17,12 C17,10 15.9999999,8.5 14.5,8.5 C13.0000001,8.5 12,10 12,12 C12,14 13,15.5000001 14.5,15.5 C16,15.4999999 17,14 17,12 Z M14.5,8.5 C16.9253741,8.5 17,11 17,12 C17,13 17,15.5 14.5,15.5 C12,15.5 12,13 12,12 C12,11 12.059,8.5 14.5,8.5 Z"></path>
                   </svg>
@@ -191,6 +209,7 @@ export default function PlayerPage() {
                 min="0"
                 max={duration || 100} 
                 onChange={handleScrub}
+                disabled={dataLoading}
                 style={{ 
                   background: `linear-gradient(to right, rgb(43, 217, 124) ${progressPercentage}%, rgb(109, 120, 125) ${progressPercentage}%)`,
                   windowRangeProgress: `${progressPercentage}%`
