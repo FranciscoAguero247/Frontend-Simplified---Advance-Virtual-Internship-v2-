@@ -46,15 +46,22 @@ export default function Sidebar({ isMobileMenuOpen, onToggleMobileMenu }: Sideba
       <aside className={`sidebar ${isMobileMenuOpen ? "sidebar--opened" : ""}`}>
 
         <div className="sidebar__logo">
-          <Image 
-            src="/assets/logo.png" 
-            alt="Summarist Logo" 
-            width={160} 
-            height={40} 
-            priority 
-          />
+          <Link 
+            href="/" 
+            className="sidebar__logo--link"
+            style={{ display: 'block', width: '100%', height: 'auto' }}
+            onClick={closeMobileMenu} 
+          >
+            <Image 
+              src="/assets/logo.png" 
+              alt="Summarist Logo" 
+              width={160} 
+              height={40} 
+              priority 
+            />
+          </Link>
         </div>
-
+        
         <div className="sidebar__wrapper">
           <nav className="sidebar__top">
             <Link 
@@ -116,7 +123,6 @@ export default function Sidebar({ isMobileMenuOpen, onToggleMobileMenu }: Sideba
               </div>
               <span className="sidebar__link">Help &amp; Support</span>
             </div>
-
           </nav>
 
           <div className="sidebar__bottom">
