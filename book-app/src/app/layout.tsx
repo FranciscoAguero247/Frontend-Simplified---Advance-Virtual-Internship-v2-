@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { AuthModalProvider } from "@/context/AuthModalContext";
 import { LibraryProvider } from "@/context/LibraryContext";
 import AuthModal from "@/components/AuthModal";
 import Sidebar from "@/components/Sidebar"; 
+import MobileNav from "@/components/MobileNav";
 import { usePathname } from "next/navigation"; 
 import "./globals.css";
 
@@ -14,9 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const excludedPaths = ["/", "/choose-plan"];
   const showSidebar = !excludedPaths.includes(pathname);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
     <html lang="en">
@@ -26,7 +30,13 @@ export default function RootLayout({
             
             <div className="app-container">
               {showSidebar && (
-                <Sidebar isMobileMenuOpen={false} onToggleMobileMenu={() => {}} />
+                <>
+                  <MobileNav onToggleMobileMenu={toggleMobileMenu} />
+                  <Sidebar 
+                    isMobileMenuOpen={isMobileMenuOpen} 
+                    onToggleMobileMenu={toggleMobileMenu} 
+                  />
+                </>
               )}
               
               <main className="main-content">

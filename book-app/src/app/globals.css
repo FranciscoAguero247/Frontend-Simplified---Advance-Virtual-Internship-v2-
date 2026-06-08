@@ -246,12 +246,7 @@ input {
 }
 
 .statistics__heading--active {
-    color: #2bd97c;
-  opacity: 1; 
-  color: #032b41; 
-  font-weight: 700;
-  border-left: 4px solid #bac8ff;
-  padding-left: 8px;
+    color: #2bd97c
 }
 
 .statistics__wrapper {
@@ -631,15 +626,6 @@ input {
     height: 40px
 }
 
-.sidebar__bottom {
-    width: 100%;
-    padding-bottom: 80px;
-    display: flex;
-    flex-direction: column;
-}
-
-
-
 .sidebar__link--wrapper {
     display: flex;
     align-items: center;
@@ -921,7 +907,7 @@ input {
 .search__input {
     height: 40px;
     width: 100%;
-    padding: 0 56px 0 16px;
+    padding: 0 16px;
     outline: none;
     background-color: #f1f6f4;
     color: #042330;
@@ -934,7 +920,7 @@ input {
     align-items: center;
     position: absolute;
     height: 100%;
-    right: 18px;
+    right: 8px;
     justify-content: flex-end;
     border-left: 2px solid #e1e7ea;
     padding-left: 8px
@@ -1095,19 +1081,6 @@ input {
     border-radius: 0 0 4px 4px;
     font-weight: 300;
     font-size: 16px
-}
-
- .auth__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
 }
 
 .btn.google__btn--wrapper {
@@ -2286,4 +2259,17 @@ input {
     .plan__card--price {
         font-size: 20px
     }
+}
+
+@media (max-width: 768px) {
+  .mobile-nav-bar {
+    display: flex !important;
+  }
+
+  .main-content, .wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-top: 60px !important;
+  
+  }
 }
