@@ -1,11 +1,18 @@
 import React from "react";
 import Link from "next/link";
-import { Book } from "@/app/foryou/page"; // Adjust this import based on your page file location
+
+export interface Book {
+  id: string;
+  title: string;
+  subTitle: string;
+  author: string;
+  imageLink: string;
+  audioLink: string;
+}
 
 interface SelectedBookProps {
   book: Book;
 }
-
 export default function SelectedBook({ book }: SelectedBookProps) {
   return (
     <>
