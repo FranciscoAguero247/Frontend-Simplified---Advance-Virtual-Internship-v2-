@@ -1,11 +1,22 @@
 import React from "react";
 import Link from "next/link";
 import { BsStar } from "react-icons/bs";
-import { Book } from "@/app/foryou/page"; // Adjust this import based on your page file location
+
+export interface Book {
+  id: string;
+  title: string;
+  subTitle: string;
+  author: string;
+  imageLink: string;
+  audioLink: string;
+  subscriptionRequired: boolean;
+  averageRating?: number; 
+}
 
 interface BookCardProps {
   book: Book;
 }
+
 
 export default function BookCard({ book }: BookCardProps) {
   return (
