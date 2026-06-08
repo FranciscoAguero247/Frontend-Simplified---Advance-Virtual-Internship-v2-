@@ -102,7 +102,7 @@ const handleAuthError = (err: any) => {
 
 
   return (
-    <div className="auth__overlay" onClick={closeModal}>
+    <div className="auth__wrapper" onClick={closeModal}>
       <div className="auth" onClick={(e) => e.stopPropagation()}>
         <div className="auth__content">
           
