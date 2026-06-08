@@ -37,8 +37,8 @@ export default function SettingsPage() {
             const docData = snapshot.docs[0].data();
             const role = docData.role; 
             const priceId = docData.items?.[0]?.price?.id;
-            const STRIPE_PREMIUM_PRICE_ID = "price_1TeNGcAt1gkHtGQQFajfqaDg"; 
-            const STRIPE_PREMIUM_PLUS_PRICE_ID = "price_1TeNJgAt1gkHtGQQEwVrwXSn";
+            const STRIPE_PREMIUM_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID; 
+            const STRIPE_PREMIUM_PLUS_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PLUS_PRICE_ID;
 
             if (role === "premium-plus" || priceId === STRIPE_PREMIUM_PLUS_PRICE_ID) {
               setSubscriptionPlan("premium-plus");

@@ -6,8 +6,8 @@ import { getCheckoutUrl } from "./stripePayment";
 import AccordionItem from "./AccordionItem";
 
 const STRIPE_PRICE_IDS = {
-  yearly: "price_1TeNJgAt1gkHtGQQEwVrwXSn", 
-  monthly: "price_1TeNGcAt1gkHtGQQFajfqaDg",
+  yearly: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PLUS_PRICE_I || "", 
+  monthly: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || "",
 };
 
 const FAQ_DATA = [

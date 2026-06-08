@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-// 🤝 Fix 1: Corrected path to match your actual tree location
 import { db, auth } from "@/firebase/firebase"; 
 import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, setDoc, onSnapshot, arrayUnion, arrayRemove } from "firebase/firestore";
@@ -22,7 +21,6 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  // Monitor Auth State changes to fetch library metrics real-time
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -35,7 +33,6 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribeAuth();
   }, []);
 
-  // Listen to Firestore real-time snapshots
   useEffect(() => {
     if (!user) return;
 
@@ -46,7 +43,6 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
         setSavedBookIds(data.savedBooks || []);
         setFinishedBookIds(data.finishedBooks || []);
       } else {
-        // Fallback fallback arrays if the user profile document is new/empty
         setSavedBookIds([]);
         setFinishedBookIds([]);
       }
@@ -59,7 +55,6 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribeSnapshot();
   }, [user]);
 
-  // Action: Add / Remove title safely from Saved Library
   const toggleSavedBook = async (bookId: string) => {
     if (!user) {
       alert("Please log in to save books!");
@@ -70,7 +65,6 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     const isAlreadySaved = savedBookIds.includes(bookId);
 
     try {
-      // 🤝 Fix 2: Changed to setDoc with merge: true to automatically initialize brand new profiles safely
       await setDoc(userDocRef, {
         savedBooks: isAlreadySaved ? arrayRemove(bookId) : arrayUnion(bookId),
       }, { merge: true });
@@ -79,7 +73,6 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Action: Add title to Finished collection
   const markAsFinished = async (bookId: string) => {
     if (!user) return;
     const userDocRef = doc(db, "users", user.uid);

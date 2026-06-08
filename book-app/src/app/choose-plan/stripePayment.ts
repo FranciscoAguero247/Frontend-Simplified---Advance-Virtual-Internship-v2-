@@ -1,5 +1,3 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { auth, db } from "../../firebase/firebase";
 import { 
   getFirestore, 
