@@ -66,7 +66,7 @@ const handleAuthError = (err: any) => {
     try {
       await signInWithEmailAndPassword(auth, "guest@gmail.com", "guest123");
       closeModal();
-      router.refresh();
+      router.push("/for-you");
     } catch (err: any) {
       setError("Guest login account configuration missing in Firebase console.");
     }
